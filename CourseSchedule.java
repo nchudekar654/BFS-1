@@ -45,3 +45,57 @@ class Solution {
         return false;
     }
 }
+
+//Backtrack + DP Solution (Memo Solution) - Maintaing path and visited arrays
+//Tc: O(V+E)
+
+class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        
+        HashMap<Integer, List<Integer>> map = new HashMap<>();
+        boolean [] path = new boolean[numCourses];
+        boolean [] visited = new boolean[numCourses];
+        for(int[] edge: prerequisites){
+            int in = edge[1];
+            int dep = edge[0];
+            if(!map.containsKey(in)){
+                map.put(in, new ArrayList<>());
+            }
+            map.get(in).add(dep);
+        }
+        for(int i=0; i < numCourses; i++){
+            if(!visited[i] && hasCycle(i, map, path, visited))
+                return false;
+        }
+        return true;
+
+    }
+
+    public boolean hasCycle(int i, HashMap<Integer, List<Integer>> map, boolean [] path, boolean [] visited){
+        //base
+        if(visited[i])
+            return false;
+        if(path[i])
+            return true;
+
+        //logic
+        List<Integer> edges = map.get(i);
+        if(edges != null){
+            //action
+            path[i] = true;
+            //recurse
+            for(int edge : edges){
+                if(hasCycle(edge, map, path, visited)){
+                    return true;
+                }
+            }
+        //backtrack
+        path[i] = false;
+
+        }
+        
+        //memo
+        visited[i] = true;
+        return false;
+    }
+}
